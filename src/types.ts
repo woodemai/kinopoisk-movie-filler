@@ -5,7 +5,8 @@ export interface MovieData {
 	directors: string[];
 	genres: string[];
 	countries: string[];
-	rating: number;
+	rating?: number;
+	ratingKinopoisk: number;
 	duration: number;
 	posterUrl?: string;
 	kinopoiskId: string;

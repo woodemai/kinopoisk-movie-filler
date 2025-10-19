@@ -7,7 +7,6 @@ export function registerCommands(
 	plugin: Plugin,
 	settings: KinopoiskMovieFillerSettings
 ) {
-	// Команда для заполнения информации о фильме
 	plugin.addCommand({
 		id: "fill-movie-info",
 		name: "Заполнить информацию о фильме из Kinopoisk",
@@ -16,7 +15,6 @@ export function registerCommands(
 		},
 	});
 
-	// Команда для заполнения информации о фильме (только если есть Kinopoisk URL)
 	plugin.addCommand({
 		id: "fill-movie-info-if-url",
 		name: "Заполнить информацию о фильме (если есть ссылка Kinopoisk)",
@@ -44,7 +42,6 @@ export function registerCommands(
 		},
 	});
 
-	// Команда для обновления всех полей фильма
 	plugin.addCommand({
 		id: "update-movie-info",
 		name: "Обновить информацию о фильме (перезаписать существующие поля)",

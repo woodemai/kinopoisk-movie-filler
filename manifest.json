@@ -1,7 +1,7 @@
 {
 	"id": "kinopoisk-movie-filler",
 	"name": "Kinopoisk Movie Filler",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "0.15.0",
 	"description": "Автоматически заполняет информацию о фильмах из Kinopoisk по ссылке в frontmatter.",
 	"author": "RedCollar",
