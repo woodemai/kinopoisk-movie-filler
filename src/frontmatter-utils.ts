@@ -45,12 +45,13 @@ export class FrontmatterUtils {
 
 		lines.push(`Title: "${movieData.title.replace(/"/g, '\\"')}"`);
 		lines.push(`Year: ${movieData.year}`);
-		lines.push(`Rating: ${movieData.rating}`);
 		lines.push(`Duration: ${movieData.duration} мин`);
 
 		if (movieData.description) {
 			lines.push(
-				`Description: "${movieData.description.replace(/"/g, '\\"')}"`
+				`Description: "${movieData.description
+					.replace(/"/g, '\\"')
+					.replace(/\n/g, "\\n")}"`
 			);
 		}
 
@@ -70,6 +71,7 @@ export class FrontmatterUtils {
 		}
 
 		lines.push(`Kinopoisk_ID: ${movieData.kinopoiskId}`);
+		lines.push(`Kinopoisk_Rating: ${movieData.ratingKinopoisk}`);
 
 		// Добавляем постер в frontmatter только если не отображаем как изображение
 		if (
@@ -156,12 +158,12 @@ export class FrontmatterUtils {
 		const alwaysUpdate = [
 			"Title",
 			"Year",
-			"Rating",
 			"Duration",
 			"Description",
 			"Author",
 			"tags",
 			"Kinopoisk_ID",
+			"Kinopoisk_Rating",
 			"Poster",
 		];
 		return alwaysUpdate.includes(fieldName);
@@ -178,15 +180,15 @@ export class FrontmatterUtils {
 			case "Year":
 				return `Year: ${movieData.year}`;
 			case "Rating":
-				return `Rating: ${movieData.rating}`;
+				// Не обновляем пользовательскую оценку
+				return null;
 			case "Duration":
 				return `Duration: ${movieData.duration} мин`;
 			case "Description":
 				return movieData.description
-					? `Description: "${movieData.description.replace(
-							/"/g,
-							'\\"'
-					  )}"`
+					? `Description: "${movieData.description
+							.replace(/"/g, '\\"')
+							.replace(/\n/g, "\\n")}"`
 					: null;
 			case "Author": {
 				if (movieData.directors.length === 0) return null;
@@ -207,6 +209,8 @@ export class FrontmatterUtils {
 			}
 			case "Kinopoisk_ID":
 				return `Kinopoisk_ID: ${movieData.kinopoiskId}`;
+			case "Kinopoisk_Rating":
+				return `Kinopoisk_Rating: ${movieData.ratingKinopoisk}`;
 			case "Poster":
 				// Не добавляем постер в frontmatter если отображаем как изображение
 				if (settings?.displayPosterAsImage && settings?.includePoster) {
@@ -233,15 +237,14 @@ export class FrontmatterUtils {
 		if (!processedFields.has("Year")) {
 			newFields.push(`Year: ${movieData.year}`);
 		}
-		if (!processedFields.has("Rating")) {
-			newFields.push(`Rating: ${movieData.rating}`);
-		}
 		if (!processedFields.has("Duration")) {
 			newFields.push(`Duration: ${movieData.duration} мин`);
 		}
 		if (!processedFields.has("Description") && movieData.description) {
 			newFields.push(
-				`Description: "${movieData.description.replace(/"/g, '\\"')}"`
+				`Description: "${movieData.description
+					.replace(/"/g, '\\"')
+					.replace(/\n/g, "\\n")}"`
 			);
 		}
 		if (!processedFields.has("Author") && movieData.directors.length > 0) {
@@ -261,6 +264,9 @@ export class FrontmatterUtils {
 		}
 		if (!processedFields.has("Kinopoisk_ID")) {
 			newFields.push(`Kinopoisk_ID: ${movieData.kinopoiskId}`);
+		}
+		if (!processedFields.has("Kinopoisk_Rating")) {
+			newFields.push(`Kinopoisk_Rating: ${movieData.ratingKinopoisk}`);
 		}
 		// Добавляем постер в frontmatter только если не отображаем как изображение
 		if (

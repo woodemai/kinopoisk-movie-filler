@@ -1,5 +1,4 @@
 import { App, Plugin, PluginSettingTab, Setting } from "obsidian";
-import { KinopoiskMovieFillerSettings, DEFAULT_SETTINGS } from "./settings";
 
 export class KinopoiskMovieFillerSettingTab extends PluginSettingTab {
 	plugin: Plugin;
@@ -103,7 +102,8 @@ export class KinopoiskMovieFillerSettingTab extends PluginSettingTab {
 			<ul>
 				<li><code>Title</code> - название фильма</li>
 				<li><code>Year</code> - год выпуска</li>
-				<li><code>Rating</code> - рейтинг на Kinopoisk</li>
+				<li><code>Rating</code> - ваша личная оценка (не перезаписывается)</li>
+				<li><code>Kinopoisk_Rating</code> - официальный рейтинг на Kinopoisk</li>
 				<li><code>Duration</code> - продолжительность в минутах</li>
 				<li><code>Description</code> - описание фильма</li>
 				<li><code>Author</code> - режиссеры (список)</li>
