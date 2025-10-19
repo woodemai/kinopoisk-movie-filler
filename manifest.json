@@ -1,11 +1,11 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "kinopoisk-movie-filler",
+	"name": "Kinopoisk Movie Filler",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Автоматически заполняет информацию о фильмах из Kinopoisk по ссылке в frontmatter.",
+	"author": "RedCollar",
+	"authorUrl": "https://github.com/redcollar",
+	"fundingUrl": "https://github.com/sponsors/redcollar",
 	"isDesktopOnly": false
 }
