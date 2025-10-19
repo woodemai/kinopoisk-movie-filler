@@ -5,7 +5,7 @@ export interface MovieData {
 	directors: string[];
 	genres: string[];
 	countries: string[];
-	rating?: number;
+	rating: string;
 	ratingKinopoisk: number;
 	duration: number;
 	posterUrl?: string;
@@ -16,5 +16,6 @@ export interface KinopoiskMovieFillerSettings {
 	autoFillOnOpen: boolean;
 	overwriteExisting: boolean;
 	includePoster: boolean;
+	displayPosterAsImage: boolean;
 	apiKey?: string;
 }

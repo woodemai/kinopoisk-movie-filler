@@ -1,4 +1,4 @@
-import { MovieData } from "./types";
+import { MovieData, KinopoiskMovieFillerSettings } from "./types";
 
 export class FrontmatterUtils {
 	static extractKinopoiskUrl(content: string): string | null {
@@ -13,12 +13,14 @@ export class FrontmatterUtils {
 	static updateFrontmatter(
 		content: string,
 		movieData: MovieData,
-		overwriteExisting = false
+		overwriteExisting = false,
+		settings?: KinopoiskMovieFillerSettings
 	): string {
 		const frontmatterMatch = content.match(/^(---\n)([\s\S]*?)(\n---)/);
 		if (!frontmatterMatch) {
-			const newFrontmatter = this.createFrontmatter(movieData);
-			return `${newFrontmatter}\n\n${content}`;
+			const newFrontmatter = this.createFrontmatter(movieData, settings);
+			const posterImage = this.getPosterImage(movieData, settings);
+			return `${newFrontmatter}\n\n${posterImage}${content}`;
 		}
 
 		const [fullMatch, startDelimiter, frontmatter, endDelimiter] =
@@ -28,12 +30,17 @@ export class FrontmatterUtils {
 		const updatedFrontmatter = this.updateExistingFrontmatter(
 			frontmatter,
 			movieData,
-			overwriteExisting
+			overwriteExisting,
+			settings
 		);
-		return `${startDelimiter}${updatedFrontmatter}${endDelimiter}${restOfContent}`;
+		const posterImage = this.getPosterImage(movieData, settings);
+		return `${startDelimiter}${updatedFrontmatter}${endDelimiter}\n\n${posterImage}${restOfContent}`;
 	}
 
-	private static createFrontmatter(movieData: MovieData): string {
+	private static createFrontmatter(
+		movieData: MovieData,
+		settings?: KinopoiskMovieFillerSettings
+	): string {
 		const lines: string[] = [];
 
 		lines.push(`Title: ${movieData.title}`);
@@ -62,7 +69,11 @@ export class FrontmatterUtils {
 
 		lines.push(`Kinopoisk_ID: ${movieData.kinopoiskId}`);
 
-		if (movieData.posterUrl) {
+		// Добавляем постер в frontmatter только если не отображаем как изображение
+		if (
+			movieData.posterUrl &&
+			(!settings?.displayPosterAsImage || !settings?.includePoster)
+		) {
 			lines.push(`Poster: ${movieData.posterUrl}`);
 		}
 
@@ -72,7 +83,8 @@ export class FrontmatterUtils {
 	private static updateExistingFrontmatter(
 		frontmatter: string,
 		movieData: MovieData,
-		overwriteExisting: boolean
+		overwriteExisting: boolean,
+		settings?: KinopoiskMovieFillerSettings
 	): string {
 		const lines = frontmatter.split("\n");
 		const updatedLines: string[] = [];
@@ -94,7 +106,11 @@ export class FrontmatterUtils {
 			) {
 				processedFields.add(fieldName);
 
-				const newValue = this.getFieldValue(fieldName, movieData);
+				const newValue = this.getFieldValue(
+					fieldName,
+					movieData,
+					settings
+				);
 				if (newValue !== null) {
 					updatedLines.push(newValue);
 
@@ -114,7 +130,11 @@ export class FrontmatterUtils {
 			}
 		}
 
-		const newFields = this.getNewFields(movieData, processedFields);
+		const newFields = this.getNewFields(
+			movieData,
+			processedFields,
+			settings
+		);
 		updatedLines.push(...newFields);
 
 		return updatedLines.join("\n");
@@ -147,7 +167,8 @@ export class FrontmatterUtils {
 
 	private static getFieldValue(
 		fieldName: string,
-		movieData: MovieData
+		movieData: MovieData,
+		settings?: KinopoiskMovieFillerSettings
 	): string | null {
 		switch (fieldName) {
 			case "Title":
@@ -162,14 +183,15 @@ export class FrontmatterUtils {
 				return movieData.description
 					? `Description: ${movieData.description}`
 					: null;
-			case "Author":
+			case "Author": {
 				if (movieData.directors.length === 0) return null;
 				const authorLines: string[] = ["Author:"];
 				movieData.directors.forEach((director) => {
 					authorLines.push(`  - ${director}`);
 				});
 				return authorLines.join("\n");
-			case "tags":
+			}
+			case "tags": {
 				const allTags = [...movieData.genres, ...movieData.countries];
 				if (allTags.length === 0) return null;
 				const tagLines = ["tags:"];
@@ -177,9 +199,14 @@ export class FrontmatterUtils {
 					tagLines.push(`  - ${tag}`);
 				});
 				return tagLines.join("\n");
+			}
 			case "Kinopoisk_ID":
 				return `Kinopoisk_ID: ${movieData.kinopoiskId}`;
 			case "Poster":
+				// Не добавляем постер в frontmatter если отображаем как изображение
+				if (settings?.displayPosterAsImage && settings?.includePoster) {
+					return null;
+				}
 				return movieData.posterUrl
 					? `Poster: ${movieData.posterUrl}`
 					: null;
@@ -190,7 +217,8 @@ export class FrontmatterUtils {
 
 	private static getNewFields(
 		movieData: MovieData,
-		processedFields: Set<string>
+		processedFields: Set<string>,
+		settings?: KinopoiskMovieFillerSettings
 	): string[] {
 		const newFields: string[] = [];
 
@@ -227,10 +255,30 @@ export class FrontmatterUtils {
 		if (!processedFields.has("Kinopoisk_ID")) {
 			newFields.push(`Kinopoisk_ID: ${movieData.kinopoiskId}`);
 		}
-		if (!processedFields.has("Poster") && movieData.posterUrl) {
+		// Добавляем постер в frontmatter только если не отображаем как изображение
+		if (
+			!processedFields.has("Poster") &&
+			movieData.posterUrl &&
+			(!settings?.displayPosterAsImage || !settings?.includePoster)
+		) {
 			newFields.push(`Poster: ${movieData.posterUrl}`);
 		}
 
 		return newFields;
+	}
+
+	private static getPosterImage(
+		movieData: MovieData,
+		settings?: KinopoiskMovieFillerSettings
+	): string {
+		if (
+			!movieData.posterUrl ||
+			!settings?.includePoster ||
+			!settings?.displayPosterAsImage
+		) {
+			return "";
+		}
+
+		return `![](${movieData.posterUrl})\n\n`;
 	}
 }

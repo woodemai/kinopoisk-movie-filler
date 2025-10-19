@@ -84,7 +84,8 @@ async function fillMovieInfo(
 		const updatedContent = FrontmatterUtils.updateFrontmatter(
 			content,
 			movieData,
-			settings.overwriteExisting
+			settings.overwriteExisting,
+			settings
 		);
 
 		// Обновляем содержимое файла

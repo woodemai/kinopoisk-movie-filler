@@ -105,6 +105,7 @@ export class KinopoiskService {
 			genres: data.genres?.map((g) => g.genre) || [],
 			countries: data.countries?.map((c) => c.country) || [],
 			ratingKinopoisk: data.ratingKinopoisk || 0,
+			rating: '',
 			duration: duration,
 			posterUrl: data.posterUrl || undefined,
 			kinopoiskId: data.kinopoiskId.toString(),
