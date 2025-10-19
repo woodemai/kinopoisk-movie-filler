@@ -43,13 +43,15 @@ export class FrontmatterUtils {
 	): string {
 		const lines: string[] = [];
 
-		lines.push(`Title: ${movieData.title}`);
+		lines.push(`Title: "${movieData.title.replace(/"/g, '\\"')}"`);
 		lines.push(`Year: ${movieData.year}`);
 		lines.push(`Rating: ${movieData.rating}`);
 		lines.push(`Duration: ${movieData.duration} мин`);
 
 		if (movieData.description) {
-			lines.push(`Description: ${movieData.description}`);
+			lines.push(
+				`Description: "${movieData.description.replace(/"/g, '\\"')}"`
+			);
 		}
 
 		if (movieData.directors.length > 0) {
@@ -172,7 +174,7 @@ export class FrontmatterUtils {
 	): string | null {
 		switch (fieldName) {
 			case "Title":
-				return `Title: ${movieData.title}`;
+				return `Title: "${movieData.title.replace(/"/g, '\\"')}"`;
 			case "Year":
 				return `Year: ${movieData.year}`;
 			case "Rating":
@@ -181,7 +183,10 @@ export class FrontmatterUtils {
 				return `Duration: ${movieData.duration} мин`;
 			case "Description":
 				return movieData.description
-					? `Description: ${movieData.description}`
+					? `Description: "${movieData.description.replace(
+							/"/g,
+							'\\"'
+					  )}"`
 					: null;
 			case "Author": {
 				if (movieData.directors.length === 0) return null;
@@ -223,7 +228,7 @@ export class FrontmatterUtils {
 		const newFields: string[] = [];
 
 		if (!processedFields.has("Title")) {
-			newFields.push(`Title: ${movieData.title}`);
+			newFields.push(`Title: "${movieData.title.replace(/"/g, '\\"')}"`);
 		}
 		if (!processedFields.has("Year")) {
 			newFields.push(`Year: ${movieData.year}`);
@@ -235,7 +240,9 @@ export class FrontmatterUtils {
 			newFields.push(`Duration: ${movieData.duration} мин`);
 		}
 		if (!processedFields.has("Description") && movieData.description) {
-			newFields.push(`Description: ${movieData.description}`);
+			newFields.push(
+				`Description: "${movieData.description.replace(/"/g, '\\"')}"`
+			);
 		}
 		if (!processedFields.has("Author") && movieData.directors.length > 0) {
 			newFields.push("Author:");
